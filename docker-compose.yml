@@ -1,26 +1,32 @@
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sqlchatbot-api
+    env_file:
+      - .env.docker
+    environment:
+      MSSQL_HOST: sqlserver
+      MSSQL_PORT: "1433"
+      MSSQL_PASSWORD: ${MSSQL_SA_PASSWORD:-YourStrong@Passw0rd123}
+      MSSQL_SQLALCHEMY_DRIVER: pymssql
+      MSSQL_WINDOWS_AUTH: "false"
+      MSSQL_TRUST_SERVER_CERTIFICATE: "true"
+      CHROMA_PERSIST_DIR: /app/chroma_db
     ports:
       - "8000:8000"
-    env_file:
-      - .env.codocker
     volumes:
-      - ./chroma_db:/app/chroma_db
-    depends_on:
-      - sqlserver
+      - chroma_data:/app/chroma_db
+    networks:
+      - stockdemo-network
+    restart: unless-stopped
 
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      SA_PASSWORD: "YourStrong@Passw0rd123"
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Developer"
-      MSSQL_MEMORY_LIMIT_MB: "2048"
-    ports:
-      - "1433:1433"
-    volumes:
-      - mssql_data:/var/opt/mssql
 
 volumes:
-  mssql_data:
+  chroma_data:
+
+networks:
+  stockdemo-network:
+    external: true
+    name: stockdemoapi_stockdemo-network

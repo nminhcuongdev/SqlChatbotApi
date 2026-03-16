@@ -5,6 +5,10 @@ __pycache__/
 .Python
 .env
 .env.*
+!.env.sample
+!.env.sample.docker
 .git
 .gitignore
 venv/
+.venv/
+chroma_db/
