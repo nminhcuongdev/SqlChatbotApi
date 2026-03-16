@@ -1,11 +1,11 @@
 # SqlChatbotApi
 
-FastAPI backend cho chatbot RAG làm việc với Microsoft SQL Server.
+FastAPI backend for a RAG-powered chatbot that works with Microsoft SQL Server.
 
-Project này gồm 3 phần chính:
-- FastAPI API để nhận request từ client
-- SQL agent dùng OpenAI để sinh và chạy truy vấn `SELECT`
-- RAG pipeline để ingest dữ liệu từ MSSQL vào ChromaDB
+This project includes:
+- A FastAPI API layer for client requests
+- A SQL agent that uses OpenAI to generate and run `SELECT` queries
+- A RAG pipeline that ingests data from MSSQL into ChromaDB
 
 ## Tech Stack
 
@@ -17,11 +17,11 @@ Project này gồm 3 phần chính:
 - OpenAI
 - Docker Compose
 
-## Environment
+## Environment Variables
 
-Tạo file `.env` từ [.env.sample](/d:/SqlChatBotAPI/.env.sample) khi chạy local.
+Create a local `.env` file from [.env.sample](/d:/SqlChatBotAPI/.env.sample) for local development.
 
-Các biến quan trọng:
+Important variables:
 - `OPENAI_API_KEY`
 - `MSSQL_HOST`
 - `MSSQL_PORT`
@@ -32,9 +32,9 @@ Các biến quan trọng:
 - `MSSQL_WINDOWS_AUTH`
 - `CHROMA_PERSIST_DIR`
 
-Mặc định Docker đang dùng `pymssql`, không dùng ODBC Driver 17.
+Docker is configured to use `pymssql` by default, without relying on ODBC Driver 17.
 
-## Run Local
+## Run Locally
 
 ```bash
 python -m venv venv
@@ -43,25 +43,25 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-API chạy tại `http://localhost:8000`.
+The API will be available at `http://localhost:8000`.
 
-## Run Docker
+## Run with Docker
 
-Project hiện dùng file env riêng cho Docker là `.env.docker`.
+Docker uses a separate environment file: `.env.docker`.
 
-Build image:
+Build the image:
 
 ```bash
 docker compose build
 ```
 
-Start service:
+Start the service:
 
 ```bash
 docker compose up -d
 ```
 
-Nếu bạn đã có container MSSQL chạy ở network khác, cần chắc rằng network trong [docker-compose.yml](/d:/SqlChatBotAPI/docker-compose.yml) trỏ đúng network external đang chứa SQL Server.
+If you already have a SQL Server container running on an existing Docker network, make sure [docker-compose.yml](/d:/SqlChatBotAPI/docker-compose.yml) points to the correct external network.
 
 ## Main Endpoints
 
@@ -72,6 +72,6 @@ Nếu bạn đã có container MSSQL chạy ở network khác, cần chắc rằ
 
 ## Notes
 
-- App khởi động sẽ tạo ChromaDB tại thư mục được khai báo trong `CHROMA_PERSIST_DIR`
-- SQL agent chỉ nên dùng cho truy vấn đọc dữ liệu
-- Nếu Docker API không lên được, kiểm tra lại log container và khả năng kết nối tới SQL Server container
+- The app creates a ChromaDB store in the directory defined by `CHROMA_PERSIST_DIR`
+- The SQL agent is intended for read-only database queries
+- If the Docker API container does not start, check the container logs and verify SQL Server connectivity
